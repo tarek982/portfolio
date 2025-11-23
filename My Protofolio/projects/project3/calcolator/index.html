@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculator — Single File</title>
+  <link rel="icon" type="image/x-icon" href="icon.png">
+  <style>
+    :root{
+      --bg: #0f172a;          /* slate-900 */
+      --panel: #111827;       /* gray-900 */
+      --glass: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.08);
+      --txt: #e5e7eb;         /* gray-200 */
+      --muted: #9ca3af;       /* gray-400 */
+      --accent: #22d3ee;      /* cyan-400 */
+      --accent-2: #60a5fa;    /* blue-400 */
+      --danger: #f87171;      /* red-400 */
+      --ok: #34d399;          /* emerald-400 */
+      --shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 15% 15%, #1f2937, transparent 60%) , radial-gradient(1200px 800px at 85% 85%, #0b1324, transparent 60%), var(--bg);
+      color:var(--txt); display:grid; place-items:center; padding:24px;
+    }
+    .calc{
+      width:min(420px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(8px);
+    }
+    .header{
+      display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--glass); border-bottom:1px solid var(--border);
+    }
+    .header h1{font-size:14px; margin:0; font-weight:600; letter-spacing: .3px; color: var(--muted)}
+    .theme{
+      display:flex; gap:8px;
+    }
+    .theme button{
+      width:28px; height:28px; border-radius:9px; border:1px solid var(--border); background:var(--panel); color:var(--txt); cursor:pointer; box-shadow: var(--shadow);
+    }
+    .display{
+      padding:18px 18px 8px 18px; min-height:120px; display:flex; flex-direction:column; gap:6px; justify-content:flex-end; align-items:flex-end; background:linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+    }
+    .expr{font-size:14px; color:var(--muted); min-height:22px; word-break:break-all}
+    .result{font-size:42px; font-weight:700; line-height:1.15; word-break:break-all}
+
+    .keys{ display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; padding:14px; background:rgba(0,0,0,.1)}
+    .key{
+      appearance:none; -webkit-appearance:none; border:1px solid var(--border); background: var(--panel);
+      color:var(--txt); font-size:20px; padding:14px; border-radius:14px; cursor:pointer; box-shadow: var(--shadow);
+      transition: transform .04s ease, filter .2s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .key:active{ transform: translateY(1px) scale(.99); filter:brightness(1.05) }
+    .op{ background: linear-gradient(180deg, rgba(34,211,238,.18), rgba(34,211,238,.08)); border-color: rgba(34,211,238,.35) }
+    .util{ background: linear-gradient(180deg, rgba(96,165,250,.18), rgba(96,165,250,.08)); border-color: rgba(96,165,250,.35) }
+    .danger{ background: linear-gradient(180deg, rgba(248,113,113,.18), rgba(248,113,113,.08)); border-color: rgba(248,113,113,.35) }
+    .equals{ background: linear-gradient(180deg, rgba(52,211,153,.28), rgba(52,211,153,.1)); border-color: rgba(52,211,153,.45) }
+    .span-2{ grid-column: span 2 }
+
+    .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0 }
+    footer{ text-align:center; color:var(--muted); font-size:12px; margin-top:10px; padding-bottom:6px }
+    kbd{ padding:2px 6px; border-radius:6px; border:1px solid var(--border); background:rgba(255,255,255,.04); font-size:11px }
+  </style>
+</head>
+<body>
+  <div class="calc" role="application" aria-label="Calculator">
+    <div class="header">
+      <h1>Calc</h1>
+      <div class="theme" aria-label="Theme">
+        <button title="Dim" aria-label="Dim" data-theme="dim">◐</button>
+        <button title="Glow" aria-label="Glow" data-theme="glow">✦</button>
+      </div>
+    </div>
+
+    <div class="display" id="display">
+      <div class="expr" id="expr" aria-live="polite"></div>
+      <div class="result" id="result" aria-live="polite">0</div>
+    </div>
+
+    <div class="keys" id="keys" aria-label="Keys">
+      <button class="key util" data-key="AC">AC</button>
+      <button class="key util" data-key="DEL">DEL</button>
+      <button class="key op" data-key="%">%</button>
+      <button class="key op" data-key="÷">÷</button>
+
+      <button class="key" data-key="7">7</button>
+      <button class="key" data-key="8">8</button>
+      <button class="key" data-key="9">9</button>
+      <button class="key op" data-key="×">×</button>
+
+      <button class="key" data-key="4">4</button>
+      <button class="key" data-key="5">5</button>
+      <button class="key" data-key="6">6</button>
+      <button class="key op" data-key="−">−</button>
+
+      <button class="key" data-key="1">1</button>
+      <button class="key" data-key="2">2</button>
+      <button class="key" data-key="3">3</button>
+      <button class="key op" data-key="+">+</button>
+
+      <button class="key util" data-key="±">±</button>
+      <button class="key" data-key="0">0</button>
+      <button class="key" data-key=",">.</button>
+      <button class="key equals span-1 equals" data-key="=">=</button>
+    </div>
+    <footer>
+      Keyboard: digits, <kbd>+</kbd> <kbd>-</kbd> <kbd>*</kbd> <kbd>/</kbd> <kbd>%</kbd>, <kbd>.</kbd>, <kbd>Enter</kbd> (=), <kbd>Backspace</kbd> (DEL), <kbd>Esc</kbd> (AC)
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const exprEl = document.getElementById('expr');
+      const resEl  = document.getElementById('result');
+      const keys   = document.getElementById('keys');
+
+      let expr = '';
+      let justEvaluated = false;
+
+      const mapKey = {
+        '÷':'/', '×':'*', '−':'-', ',':'.'
+      };
+
+      function formatNumber(n){
+        if (!isFinite(n)) return '∞';
+        const s = n.toString();
+        if (Math.abs(n) >= 1e12 || (Math.abs(n) > 0 && Math.abs(n) < 1e-6)) return n.toExponential(8).replace(/\.0+e/,'e');
+        // limit decimals to 10, trim trailing zeros
+        let fixed = Number(n.toFixed(10)).toString();
+        return fixed.replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'');
+      }
+
+      function sanitize(s){
+        s = s.replace(/[×÷−]/g, m=>mapKey[m]);
+        // allow only safe characters
+        if (/[^0-9+\-*/%().\s]/.test(s)) throw new Error('Invalid characters');
+        // no two operators in a row (except unary minus which we allow naively)
+        return s;
+      }
+
+      function evaluate(){
+        if (!expr) return;
+        const safe = sanitize(expr);
+        let result;
+        try{
+          // eslint-disable-next-line no-new-func
+          result = Function('"use strict"; return (' + safe + ')')();
+        }catch(err){
+          wiggle();
+          return;
+        }
+        if (typeof result !== 'number' || !isFinite(result)) { wiggle(); return; }
+        resEl.textContent = formatNumber(result);
+        exprEl.textContent = safe;
+        justEvaluated = true;
+      }
+
+      function input(token){
+        if (token === 'AC'){ expr=''; resEl.textContent='0'; exprEl.textContent=''; justEvaluated=false; return; }
+        if (token === 'DEL'){ expr = expr.trimEnd().slice(0,-1); render(); return; }
+        if (token === '='){ evaluate(); return; }
+        if (token === '±'){
+          // toggle sign of the last number
+          const m = expr.match(/([\d.]+)\s*$/);
+          if (m){
+            const num = m[1];
+            const start = m.index;
+            const val = -Number(num);
+            expr = expr.slice(0,start) + String(val);
+            render();
+          } else if (!expr){ expr = '-'; render(); }
+          return;
+        }
+        if (token in mapKey) token = mapKey[token];
+        if (token === '.' && /(^|\D)\d*$/.test(expr)){
+          // allow decimal, but avoid multiple dots in the last number
+          const lastNum = expr.match(/(\d+\.?\d*)$/);
+          if (lastNum && lastNum[0].includes('.')) return wiggle();
+        }
+        if (justEvaluated && /[0-9.]/.test(token)){
+          // start a new expression after evaluation when number comes in
+          expr = '';
+          exprEl.textContent='';
+        }
+        justEvaluated = false;
+        expr += token;
+        render();
+      }
+
+      function render(){
+        exprEl.textContent = expr;
+        let preview = '';
+        try{
+          const safe = sanitize(expr);
+          if (/\d/.test(safe) && /[+\-*/%]/.test(safe)){
+            // lightweight preview — ignore errors silently
+            // eslint-disable-next-line no-new-func
+            const r = Function('"use strict"; return (' + safe + ')')();
+            if (typeof r === 'number' && isFinite(r)) preview = formatNumber(r);
+          }
+        }catch(_){/* ignore */}
+        resEl.textContent = preview || (expr ? expr.replace(/[*/]/g, m=> m==='*'?'×':'÷') : '0');
+      }
+
+      function wiggle(){
+        resEl.animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}],{duration:150,iterations:1});
+      }
+
+      keys.addEventListener('click', e=>{
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        input(btn.dataset.key);
+        btn.blur();
+      });
+
+      // Keyboard support
+      window.addEventListener('keydown', e=>{
+        const k = e.key;
+        if (/^[0-9]$/.test(k)) return input(k);
+        if (k === 'Enter' || k === '=') return input('=');
+        if (k === 'Backspace') return input('DEL');
+        if (k === 'Escape') return input('AC');
+        if (k === '.') return input('.');
+        if (['+','-','*','/','%','(',')'].includes(k)) return input(k);
+      });
+
+      // Tiny theme toggle flair
+      document.querySelectorAll('[data-theme]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          document.body.style.background = btn.dataset.theme==='glow'
+            ? 'radial-gradient(1000px 700px at 20% 20%, #0ea5e9, transparent 35%), radial-gradient(1200px 800px at 85% 85%, #22d3ee33, transparent 60%), var(--bg)'
+            : 'radial-gradient(1200px 800px at 15% 15%, #1f2937, transparent 60%) , radial-gradient(1200px 800px at 85% 85%, #0b1324, transparent 60%), var(--bg)';
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>

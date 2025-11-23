@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Marhey:wght@300..700&display=swap');
+
+* {
+    margin: 0%;
+    padding: 0%;
+    font-family: Marhey;
+}
+
+.container {
+    height: 100vh;
+    background-color: lightgreen;
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "side_bar main"
+        "footer footer";
+        grid-template-columns: 300px 1fr;
+        grid-template-rows: auto 1fr auto;
+        gap: 2px;
+}
+
+header {
+    grid-area: header;
+    background-color: rgb(0, 139, 56);
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+header ul {
+    display: flex;
+    list-style: none;
+}
+
+header ul li {
+    margin-right: 20px;
+}
+
+header ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    transition: 0.3s;
+    border-radius: 10px;
+    padding: 5px 10px;
+
+}
+
+header ul li a:hover {
+    background-color: rgba(0, 101, 41, 0.621);
+}
+
+aside {
+    grid-area: side_bar;
+    background-color: rgb(201, 242, 188);
+    padding: 20px;
+}
+
+h2 {
+    margin-bottom: 30px;
+    margin-top: 15px;
+    color: rgb(95, 95, 95);
+}
+
+aside ul {
+    list-style: none;
+}
+
+aside ul li {
+    margin-bottom: 10px;
+}
+
+aside ul li a {
+    text-decoration: none;
+    color: rgb(0, 139, 56);
+    font-weight: bold;
+}
+
+main {
+    background-color: white;
+    grid-area: main;
+    padding: 20px;
+}
+
+#item_container {
+    /* height: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row; */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.item {
+    background-color: rgb(0, 139, 56);
+    padding: 10px 20px;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    margin: 10px;
+    width: fit-content;
+    height: fit-content;
+}
+
+footer {
+    grid-area: footer;
+    background-color: rgb(40, 40, 40);
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item a {
+    color: white;
+    text-decoration-line: none;
+} 
+
+aside ul li a {
+    transition: 0.3s;
+}
+
+aside ul li a:hover {
+    padding: 5px;
+    color: white;
+    background-color: rgba(0, 101, 41, 0.621);
+    border-radius: 5px;
+}
+
+@media (max-width: 780px) {
+    .container {
+        grid-template-areas:
+           "header"
+            "side_bar"
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+    }
+
+    
+}

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Casio-style Scientific Calculator</title>
+<style>
+  :root{
+    --bg:#111;
+    --panel:#0d0d0d;
+    --screen-bg:#e9f0f7;
+    --button:#3a3a3a;
+    --btn-fg:#e8e8e8;
+    --accent:#7fc241;
+    --accent2:#ffd24d;
+    --soft:#4a4a4a;
+    --op:#ff8800;
+    --op-fg:#ffffff;
+    --num:#5a5a5a;
+    --num-fg:#ffffff;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#222,#0f0f0f);display:flex;align-items:center;justify-content:center;padding:20px}
+  .calculator{width:360px;background:linear-gradient(180deg,#161616,#0c0c0c);border-radius:12px;padding:16px;box-shadow:0 20px 50px rgba(0,0,0,.7);}
+  .screen{background:var(--panel);border-radius:8px;padding:12px;color:#e6eef6;box-shadow:inset 0 -4px 8px rgba(0,0,0,.6);}
+  .display-top{font-size:14px;color:#bcd;min-height:18px;text-align:right;opacity:.85}
+  .display-bottom{background:var(--screen-bg);color:#0b1220;border-radius:6px;padding:10px;margin-top:8px;font-size:24px;text-align:right;min-height:42px;overflow:auto}
+  .row{display:flex;gap:8px;margin-top:10px}
+  button.btn{flex:1;padding:12px;border-radius:8px;border:0;background:var(--button);color:var(--btn-fg);font-size:16px;box-shadow:0 4px rgba(0,0,0,.3);cursor:pointer}
+  button.btn.wide{flex:2}
+  .fn{background:var(--soft);color:#d7d7d7;font-size:13px}
+  .key-op{background:var(--op);color:var(--op-fg)}
+  .num-key{background:var(--num);color:var(--num-fg)}
+  .accent{background:var(--accent);color:#04210a}
+  .accent2{background:var(--accent2);color:#3a2e00}
+  .small{font-size:13px}
+  .muted{opacity:.85}
+  .top-controls{display:flex;gap:8px;margin-bottom:8px}
+  .mode{padding:6px 8px;border-radius:6px;background:#0b0b0b;color:#9fb8d4;font-size:13px}
+  footer{color:#9aa6b3;font-size:12px;margin-top:12px;text-align:center}
+  @media (max-width:420px){.calculator{width:94vw}}
+</style>
+</head>
+<body>
+  <div class="calculator" role="application" aria-label="Casio-style scientific calculator">
+    <div class="top-controls">
+      <div class="mode" id="degRad">DEG</div>
+      <div style="flex:1"></div>
+      <div class="mode" id="memoryIndicator">M: 0</div>
+    </div>
+
+    <div class="screen" aria-live="polite">
+      <div class="display-top" id="history"> </div>
+      <div class="display-bottom" id="display">0</div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <button class="btn fn" data-action="clear">AC</button>
+      <button class="btn fn" data-action="back">DEL</button>
+      <button class="btn fn" data-value="(" >(</button>
+      <button class="btn fn" data-value=")">)</button>
+      <button class="btn fn" data-action="mode">DRG</button>
+    </div>
+
+    <div class="row">
+      <button class="btn fn" data-value="sin(">sin</button>
+      <button class="btn fn" data-value="cos(">cos</button>
+      <button class="btn fn" data-value="tan(">tan</button>
+      <button class="btn key-op" data-value="^">^</button>
+      <button class="btn key-op" data-value="%">%</button>
+    </div>
+
+    <div class="row">
+      <button class="btn fn" data-value="asin(">sin⁻¹</button>
+      <button class="btn fn" data-value="acos(">cos⁻¹</button>
+      <button class="btn fn" data-value="atan(">tan⁻¹</button>
+      <button class="btn key-op" data-value="sqrt(">√</button>
+      <button class="btn key-op" data-value="!">n!</button>
+    </div>
+
+    <div class="row">
+      <button class="btn num-key" data-value="7">7</button>
+      <button class="btn num-key" data-value="8">8</button>
+      <button class="btn num-key" data-value="9">9</button>
+      <button class="btn key-op" data-value="/">÷</button>
+      <button class="btn fn" data-action="ans">ANS</button>
+    </div>
+
+    <div class="row">
+      <button class="btn num-key" data-value="4">4</button>
+      <button class="btn num-key" data-value="5">5</button>
+      <button class="btn num-key" data-value="6">6</button>
+      <button class="btn key-op" data-value="*">×</button>
+      <button class="btn fn" data-action="mPlus">M+</button>
+    </div>
+
+    <div class="row">
+      <button class="btn num-key" data-value="1">1</button>
+      <button class="btn num-key" data-value="2">2</button>
+      <button class="btn num-key" data-value="3">3</button>
+      <button class="btn key-op" data-value="-">−</button>
+      <button class="btn fn" data-action="mMinus">M-</button>
+    </div>
+
+    <div class="row">
+      <button class="btn num-key" data-value="0">0</button>
+      <button class="btn num-key" data-value=".">.</button>
+      <button class="btn fn" data-action="pi">π</button>
+      <button class="btn key-op" data-value="+">+</button>
+      <button class="btn fn" data-action="mr">MR</button>
+    </div>
+
+    <div class="row">
+      <button class="btn wide fn" data-value="log(">log</button>
+      <button class="btn fn" data-value="ln(">ln</button>
+      <button class="btn accent" data-action="equals">=</button>
+    </div>
+
+    <footer>Click buttons or use keyboard. DRG toggles degree/radian. </footer>
+  </div>
+
+<script>
+(() => {
+  const display = document.getElementById('display');
+  const history = document.getElementById('history');
+  const degRad = document.getElementById('degRad');
+  const memoryIndicator = document.getElementById('memoryIndicator');
+
+  let expr = '';
+  let lastAns = 0;
+  let memory = 0;
+  let mode = 'DEG';
+
+  function updateUI(){
+    display.textContent = expr || '0';
+    history.textContent = '';
+    memoryIndicator.textContent = 'M: ' + (memory || 0);
+    degRad.textContent = mode;
+  }
+
+  function pushValue(v){
+    expr += v;
+    updateUI();
+  }
+
+  function clearAll(){ expr=''; updateUI(); }
+  function backspace(){ expr = expr.slice(0,-1); updateUI(); }
+
+  function toJS(exp){
+    let s = exp;
+    s = s.replace(/×/g,'*').replace(/÷/g,'/');
+    s = s.replace(/\^/g,'**');
+    s = s.replace(/(\d+(?:\.\d+)?)%/g,'($1/100)');
+    s = s.replace(/π/g, 'Math.PI');
+    s = s.replace(/(?<![a-zA-Z0-9_])log\(/g, 'Math.log10(');
+    s = s.replace(/(?<![a-zA-Z0-9_])ln\(/g, 'Math.log(');
+    s = s.replace(/(?<![a-zA-Z0-9_])sqrt\(/g, 'Math.sqrt(');
+
+    ['sin','cos','tan','asin','acos','atan'].forEach(fn => {
+      const pattern = new RegExp(fn + '\\(', 'g');
+      s = s.replace(pattern, `__${fn}__(`);
+    });
+
+    s = s.replace(/(\d+(?:\.\d+)?)!/g, 'fact($1)');
+    s = s.replace(/ANS/g, `(${Number(lastAns)})`);
+    return s;
+  }
+
+  function fact(n){
+    n = Number(n);
+    if(!Number.isFinite(n)) throw 'Invalid factorial';
+    if(n<0) throw 'Factorial of negative';
+    if(Math.floor(n)!==n) throw 'Factorial only for integers';
+    let r=1;
+    for(let i=2;i<=n;i++) r*=i;
+    return r;
+  }
+
+  function __sin__(x){ x = Number(x); if(mode==='DEG') x = x * Math.PI/180; return Math.sin(x); }
+  function __cos__(x){ x = Number(x); if(mode==='DEG') x = x * Math.PI/180; return Math.cos(x); }
+  function __tan__(x){ x = Number(x); if(mode==='DEG') x = x * Math.PI/180; return Math.tan(x); }
+  function __asin__(x){ let v = Math.asin(Number(x)); if(mode==='DEG') v = v * 180/Math.PI; return v; }
+  function __acos__(x){ let v = Math.acos(Number(x)); if(mode==='DEG') v = v * 180/Math.PI; return v; }
+  function __atan__(x){ let v = Math.atan(Number(x)); if(mode==='DEG') v = v * 180/Math.PI; return v; }
+
+  function evaluateExpression(){
+    if(!expr) return;
+    try{
+      const js = toJS(expr);
+      const fn = new Function('fact','__sin__','__cos__','__tan__','__asin__','__acos__','__atan__', 'return ('+js+');');
+      const result = fn(fact,__sin__,__cos__,__tan__,__asin__,__acos__,__atan__);
+      if(!Number.isFinite(result)) throw 'Result not finite';
+      lastAns = result;
+      history.textContent = expr + ' =';
+      expr = String(result);
+      updateUI();
+    }catch(e){
+      expr = '';
+      display.textContent = 'Error';
+      history.textContent = '';
+    }
+  }
+
+  document.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', ()=>{
+      const v = btn.dataset.value;
+      const act = btn.dataset.action;
+      if(v!==undefined){
+        if(v==='.' && /\.[0-9]*$/.test(expr)) return;
+        expr += v;
+        updateUI();
+      }else if(act){
+        if(act==='clear') { clearAll(); }
+        else if(act==='back') { backspace(); }
+        else if(act==='mode') { mode = mode==='DEG' ? 'RAD' : 'DEG'; updateUI(); }
+        else if(act==='equals') { evaluateExpression(); }
+        else if(act==='ans') { expr += 'ANS'; updateUI(); }
+        else if(act==='mPlus'){ memory += Number(expr || lastAns || 0); updateUI(); }
+        else if(act==='mMinus'){ memory -= Number(expr || lastAns || 0); updateUI(); }
+        else if(act==='mr'){ expr += String(memory); updateUI(); }
+        else if(act==='pi'){ expr += 'π'; updateUI(); }
+      }
+    });
+  });
+
+  window.addEventListener('keydown', (e)=>{
+    const k = e.key;
+    if((/\d/).test(k)) { pushValue(k); }
+    else if(k==='Enter' || k==='='){ evaluateExpression(); }
+    else if(k==='Backspace'){ backspace(); }
+    else if(k==='Escape'){ clearAll(); }
+    else if(k==='.') { pushValue('.'); }
+    else if(k==='+'||k==='-'||k==='*'||k=='/'||k=='%'){ pushValue(k); }
+    else if(k==='('||k===')'){ pushValue(k); }
+  });
+
+  updateUI();
+})();
+</script>
+</body>
+</html>

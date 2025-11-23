@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Marhey:wght@300..700&display=swap');
+
+body {
+    background-color: #F5EFFF;
+}
+
+* {
+    font-family: Marhey;
+}
+
+#big_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#completed {
+    height: 200px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #CDC1FF;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 20px;
+}
+
+#incompleted {
+    height: 200px;
+    width: 400px;
+    background-color: #CDC1FF;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 20px;
+}
+
+h1 {
+    color: #8EA7E9;
+}
+
+ul {
+    padding: 10px;
+    margin-top: 5px;
+}
+
+button {
+    background-color: #C4DFDF;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+#done_1 {
+    margin-left: 100px;
+}
+
+#done_2 {
+    margin-left: 151px;
+}
+
+#delete_1 {
+    margin-left: 151px;  
+}
+
+#delete_2 {
+    margin-left: 57px;   
+}

@@ -1,0 +1,36 @@
+body {
+  display:flex; 
+  flex-direction:column;   
+  justify-content:center; 
+  align-items:center;
+  height:100vh; 
+  background:lightgrey; 
+  color:rgb(26, 25, 25); 
+  font-family:"Comic Sans MS", cursive, sans-serif;
+}
+#title {
+  font-size:60px;
+  margin-bottom:15px;
+  font-weight:bold;
+}
+#day {
+  font-size:32px;
+  margin-bottom:10px;
+}
+#clock {
+  font-size:60px;
+}
+#date {
+  font-size:28px;
+  margin-top:10px;
+}
+
+.contaner {
+    width: 400px;
+    height: fit-content;
+    text-align: center;
+    background-color: oldlace;
+    padding: 50px 100px;
+    border: 1px black solid;
+    border-radius: 20px;
+}
